@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provider View Table</title>
+    <link th:href="@{/styles/table.css}" rel="stylesheet" />
+</head>
+<body>
+<h1>Feedback Recieved for <span th:text="${pname}"></span></h1>
+
+<table>
+    <thead>
+    <tr class="headings">
+        <th th:each="header: ${headers}" class="column-title" th:text="${header}" />
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr class="even pointer" th:each="row: ${rows}" th:class="${row.get('updated')}? 'highlight'">
+        <td th:each="header: ${headers}" th:text="${row.get(header)}" />
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
