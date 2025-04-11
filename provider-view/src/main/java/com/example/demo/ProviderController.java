@@ -14,14 +14,14 @@ import java.util.List;
 
 @Controller
 public class ProviderController {
-    @Autowired UpdateNotifierService uns;
+    @Autowired UpdateReceiverService urs;
 
     @GetMapping("/table/{product}")
     public String table(Model model, @PathVariable String product) {
         RestTemplate restTemplate = new RestTemplate();
         String allUrl = "http://localhost:8081/all";
         FeedbackData[] all = restTemplate.getForObject(allUrl, FeedbackData[].class);
-        ArrayList<Long> updated = uns.getUpdated();
+        ArrayList<Long> updated = (ArrayList<Long>) urs.getUpdated();
         ArrayList<HashMap<String,Object>> data = new ArrayList<>();
         //ArrayList<UpdatedFeedbackData> ufd = new ArrayList<>();
         for (FeedbackData fd : all) {
