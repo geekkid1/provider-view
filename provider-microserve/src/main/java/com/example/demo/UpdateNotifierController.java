@@ -26,7 +26,7 @@ public class UpdateNotifierController {
     }
 
     @GetMapping("/all")
-    public List<Long> all() {
-        return uns.getUpdated();
+    public ResponseEntity<List<Long>> all() {
+        return ResponseEntity.status(HttpStatus.OK).body(uns.getUpdated());
     }
 }
