@@ -15,18 +15,15 @@ import java.util.List;
 @Controller
 public class ProviderController {
     @Autowired UpdateReceiverService urs;
+    @Autowired DatabaseService dbs;
 
     @GetMapping("/table/{product}")
     public String table(Model model, @PathVariable String product) {
-        RestTemplate restTemplate = new RestTemplate();
-        String allUrl = "http://localhost:8081/all";
-        FeedbackData[] all = restTemplate.getForObject(allUrl, FeedbackData[].class);
+        FeedbackData[] all = dbs.getFbByProduct(product);
         ArrayList<Long> updated = (ArrayList<Long>) urs.getUpdated();
         ArrayList<HashMap<String,Object>> data = new ArrayList<>();
-        //ArrayList<UpdatedFeedbackData> ufd = new ArrayList<>();
         for (FeedbackData fd : all) {
-            if (fd.productName.equals(product)) {
-                //ufd.add(new UpdatedFeedbackData(fd, updated.contains(fd.id)));
+            if (fd.productName.equals(product)) { // just a double check
                 HashMap<String,Object> datum = new HashMap<>();
                 datum.put("id",fd.id+"");
                 datum.put("content",fd.content);
