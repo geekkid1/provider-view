@@ -23,7 +23,7 @@ public class UpdateReceiverService {
             } else {
                 return new ArrayList<>(); // else return empty list?
             }
-        } catch (HttpClientErrorException ignored) {
+        } catch (Exception ignored) {
             return new ArrayList<>();
         }
 

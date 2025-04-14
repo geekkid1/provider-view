@@ -12,13 +12,16 @@ public class FeedbackData {
     @JsonProperty("metadata")
     Map<String,String> metaData;
 
+    @JsonProperty("user_data")
+    UserData author;
+
     public FeedbackData() {}
-    public FeedbackData(long id, String pn, String c, Map<String,String> md) {
+    public FeedbackData(long id, String pn, String c, Map<String,String> md, UserData ud) {
         this.id = id;
         productName = pn;
         content = c;
         metaData = md;
-
+        author = ud;
     }
     public long getId() {
         return id;
@@ -31,5 +34,11 @@ public class FeedbackData {
     }
     public Map<String,String> getMetaData() {
         return metaData;
+    }
+    public UserData getAuthor() {return author; }
+
+    public class UserData {
+        long id;
+        public long getId() { return id; }
     }
 }
