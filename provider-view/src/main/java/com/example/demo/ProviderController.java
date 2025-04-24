@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ public class ProviderController {
     @GetMapping("/table/{product}")
     public String table(Model model, @PathVariable String product) {
         FeedbackData[] all = dbs.getFbByProduct(product);
+        DummyFilterClass dfc = dbs.getFilter(product);
+        System.out.println(product);
         ArrayList<Long> updated = (ArrayList<Long>) urs.getUpdated();
         ArrayList<HashMap<String,Object>> data = new ArrayList<>();
         for (FeedbackData fd : all) {
@@ -35,6 +39,14 @@ public class ProviderController {
         model.addAttribute("headers",headers);
         model.addAttribute("pname", product);
         model.addAttribute("rows",data);
+        model.addAttribute("filter", dfc);
         return "table";
+    }
+
+    @PostMapping("/filter")
+    public String filter(@ModelAttribute DummyFilterClass filter, Model model) {
+        model.addAttribute("path", "table/" + filter.product);
+        dbs.updateFilter(filter);
+        return table(model, filter.product);
     }
 }
