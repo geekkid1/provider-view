@@ -6,6 +6,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class DatabaseService {
+
+    public FeedbackData[] getAll() {
+        RestTemplate restTemplate = new RestTemplate();
+        String allUrl = "http://localhost:8081/all";
+        return restTemplate.getForObject(allUrl, FeedbackData[].class);
+    }
+
     public FeedbackData[] getFbByProduct(String productName) {
         RestTemplate restTemplate = new RestTemplate();
         String allUrl = "http://localhost:8081/product?product=%s".formatted(productName);

@@ -22,7 +22,12 @@ public class ProviderController {
 
     @GetMapping("/table/{product}")
     public String table(Model model, @PathVariable String product) {
-        FeedbackData[] all = dbs.getFbByProduct(product);
+        FeedbackData[] all;
+        if(product.equalsIgnoreCase("all")) {
+            all = dbs.getAll();
+        } else {
+            all = dbs.getFbByProduct(product);
+        }
         DummyFilterClass dfc = dbs.getFilter(product);
         ArrayList<Long> updated = (ArrayList<Long>) urs.getUpdated();
         ArrayList<HashMap<String,Object>> data = new ArrayList<>();
