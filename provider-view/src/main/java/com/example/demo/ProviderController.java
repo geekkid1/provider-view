@@ -55,4 +55,9 @@ public class ProviderController {
         //return table(model, filter.product);
         return new ModelAndView("redirect:table/"+filter.product);
     }
+
+    @GetMapping("/all")
+    public ModelAndView all(Model model) {
+        return new ModelAndView("redirect:table/all");
+    }
 }
