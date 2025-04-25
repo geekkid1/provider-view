@@ -32,13 +32,11 @@ public class ProviderController {
         ArrayList<Long> updated = (ArrayList<Long>) urs.getUpdated();
         ArrayList<HashMap<String,Object>> data = new ArrayList<>();
         for (FeedbackData fd : all) {
-            if (fd.productName.equals(product)) { // just a double check
-                HashMap<String,Object> datum = new HashMap<>();
-                datum.put("id",fd.id+"");
-                datum.put("content",fd.content);
-                datum.put("updated",updated.contains(fd.id));
-                data.add(datum);
-            }
+            HashMap<String,Object> datum = new HashMap<>();
+            datum.put("id",fd.id+"");
+            datum.put("content",fd.content);
+            datum.put("updated",updated.contains(fd.id));
+            data.add(datum);
         }
         List<String> headers = Arrays.asList(new String[]{"id","content"});
         model.addAttribute("headers",headers);

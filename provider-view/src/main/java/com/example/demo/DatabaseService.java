@@ -10,7 +10,8 @@ public class DatabaseService {
     public FeedbackData[] getAll() {
         RestTemplate restTemplate = new RestTemplate();
         String allUrl = "http://localhost:8081/all";
-        return restTemplate.getForObject(allUrl, FeedbackData[].class);
+        FeedbackData[] all = restTemplate.getForObject(allUrl, FeedbackData[].class);
+        return all;
     }
 
     public FeedbackData[] getFbByProduct(String productName) {
