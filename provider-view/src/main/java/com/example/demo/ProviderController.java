@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +27,9 @@ public class ProviderController {
 
     @GetMapping("/table/{product}")
     public String table(Model model, @PathVariable String product) {
+        // get datetime formatter
+        DateTimeFormatter dtFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+                .withZone(ZoneId.systemDefault());
         FeedbackData[] all;
         if(product.equalsIgnoreCase("all")) {
             all = dbs.getAll();
@@ -35,8 +43,17 @@ public class ProviderController {
             HashMap<String,Object> datum = new HashMap<>();
             datum.put("id",fd.id+"");
             datum.put("content",fd.content);
+            Instant created = null;
+            try {
+                created = Instant.parse(fd.metaData.get("DateTime"));
+                datum.put("datetime", dtFormat.format(created));
+            } catch (DateTimeParseException ignored) {
+                datum.put("datetime", "");
+            }
             datum.put("updated",updated.contains(fd.id));
-            data.add(datum);
+            if((created == null && dfc.getLen() == 'A')||(created != null && dbs.filter(created, dfc.getLen()))) {
+                data.add(datum);
+            }
         }
         List<String> headers = Arrays.asList(new String[]{"id","content"});
         model.addAttribute("headers",headers);

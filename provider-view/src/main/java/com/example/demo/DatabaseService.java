@@ -4,6 +4,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 @Service
 public class DatabaseService {
 
@@ -33,5 +36,15 @@ public class DatabaseService {
         String getUrl = "http://localhost:8081/filter/" + product;
         DummyFilterClass dfr = restTemplate.getForObject(getUrl, DummyFilterClass.class);
         return dfr;
+    }
+
+    public boolean filter(Instant dt, char len) {
+        return switch (len) {
+            case 'D' -> dt.isAfter(Instant.now().minus(1, ChronoUnit.DAYS));
+            case 'W' -> dt.isAfter(Instant.now().minus(7, ChronoUnit.DAYS));
+            case 'M' -> dt.isAfter(Instant.now().minus(30, ChronoUnit.DAYS));
+            case 'Y' -> dt.isAfter(Instant.now().minus(365, ChronoUnit.DAYS));
+            default -> true;
+        };
     }
 }
