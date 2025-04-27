@@ -14,7 +14,8 @@ public class DummyFilterClass {
     public char len;
     @JsonProperty("product")
     public String product;
-    //public Map<String, Object> uiModel;
+    @JsonProperty("bp")
+    public char bp;
 
 
     public DummyFilterClass(char len, String product) {
@@ -24,8 +25,5 @@ public class DummyFilterClass {
     public DummyFilterClass(String product) {
         this.product = product;
     }
-    /*public DummyFilterClass(Map<String, Object> model) {
-        uiModel = model;
-    }*/
     public DummyFilterClass() {}
 }

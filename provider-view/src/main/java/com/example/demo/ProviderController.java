@@ -50,12 +50,20 @@ public class ProviderController {
             } catch (DateTimeParseException ignored) {
                 datum.put("datetime", "");
             }
+            if(fd.metaData.get("isBugReport") == null) {
+                datum.put("bugreport", "");
+            } else if(fd.metaData.get("isBugReport").equalsIgnoreCase("true")) {
+                datum.put("bugreport", "Y");
+            } else {
+                datum.put("bugreport", "N");
+            }
             datum.put("updated",updated.contains(fd.id));
             if((created == null && dfc.getLen() == 'A')||(created != null && dbs.filter(created, dfc.getLen()))) {
-                data.add(datum);
+                if(dfc.bp == 'A'|| (dfc.bp == 'N' && (datum.get("bugreport").equals("N") || datum.get("bugreport").equals(""))) || (dfc.bp == 'Y' && datum.get("bugreport").equals("Y")))
+                    data.add(datum);
             }
         }
-        List<String> headers = Arrays.asList(new String[]{"id","content"});
+        List<String> headers = Arrays.asList(new String[]{"id","content","datetime","bugreport"});
         model.addAttribute("headers",headers);
         model.addAttribute("pname", product);
         model.addAttribute("rows",data);
@@ -70,6 +78,8 @@ public class ProviderController {
         //return table(model, filter.product);
         return new ModelAndView("redirect:table/"+filter.product);
     }
+
+    @PostMapping("/filterbp")
 
     @GetMapping("/all")
     public ModelAndView all(Model model) {

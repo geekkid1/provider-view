@@ -16,10 +16,16 @@
             <option th:value="'W'" th:text="Week"></option>
             <option th:value="'D'" th:text="Day"></option>
         </select>
+        <label for="bp">Bug report: </label>
+        <select id="bp" name="bp" th:field="*{bp}">
+            <option th:value="'A'" th:text="All"></option>
+            <option th:value="'Y'" th:text="Yes"></option>
+            <option th:value="'N'" th:text="No"></option>
+        </select>
 <!--        <input type="hidden" id="product" name="product" th:field="*{product}" th:value="${pname}" />-->
         <input type="hidden" id="product" name="product" th:field="*{product}" />
         <!--<input type="hidden" id="uimodel" name="uimodel" th:field="*{uiModel}" th:value="${filter.getUiModel()}">-->
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Filter" />
     </form>
     <table>
         <thead>
