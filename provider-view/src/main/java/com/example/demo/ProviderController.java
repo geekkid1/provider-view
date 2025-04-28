@@ -3,11 +3,7 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.Instant;
@@ -23,13 +19,23 @@ import java.util.List;
 @Controller
 public class ProviderController {
     @Autowired UpdateReceiverService urs;
+    @Autowired UserNotificationService uns;
     @Autowired DatabaseService dbs;
 
     @GetMapping("/table/{product}")
-    public String table(Model model, @PathVariable String product) {
+    public String table(Model model, @PathVariable String product, @RequestParam(defaultValue = "0") String nState) {
         // get datetime formatter
         DateTimeFormatter dtFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
                 .withZone(ZoneId.systemDefault());
+        // process request param
+        int state = Integer.parseInt(nState);
+        if(state == 1) {
+            model.addAttribute("notifState", "Sorry, the requested user could not be reached.");
+        } else if(state == 2) {
+            model.addAttribute("notifState", "User notified!");
+        } else {
+            model.addAttribute("notifState", "");
+        }
         FeedbackData[] all;
         if(product.equalsIgnoreCase("all")) {
             all = dbs.getAll();
@@ -47,7 +53,7 @@ public class ProviderController {
             try {
                 created = Instant.parse(fd.metaData.get("DateTime"));
                 datum.put("datetime", dtFormat.format(created));
-            } catch (DateTimeParseException ignored) {
+            } catch (DateTimeParseException | NullPointerException ignored) {
                 datum.put("datetime", "");
             }
             if(fd.metaData.get("isBugReport") == null) {
@@ -58,16 +64,22 @@ public class ProviderController {
                 datum.put("bugreport", "N");
             }
             datum.put("updated",updated.contains(fd.id));
+            try {
+                datum.put("userid", fd.getAuthor().id);
+            } catch(NullPointerException ignored) {
+                datum.put("userid", "");
+            }
             if((created == null && dfc.getLen() == 'A')||(created != null && dbs.filter(created, dfc.getLen()))) {
                 if(dfc.bp == 'A'|| (dfc.bp == 'N' && (datum.get("bugreport").equals("N") || datum.get("bugreport").equals(""))) || (dfc.bp == 'Y' && datum.get("bugreport").equals("Y")))
                     data.add(datum);
             }
         }
-        List<String> headers = Arrays.asList(new String[]{"id","content","datetime","bugreport"});
+        List<String> headers = Arrays.asList("id","userid","content","datetime","bugreport");
         model.addAttribute("headers",headers);
         model.addAttribute("pname", product);
         model.addAttribute("rows",data);
         model.addAttribute("filter", dfc);
+        model.addAttribute("notif", new DummyNotificationClass(product));
         return "table";
     }
 
@@ -79,7 +91,11 @@ public class ProviderController {
         return new ModelAndView("redirect:table/"+filter.product);
     }
 
-    @PostMapping("/filterbp")
+    @PostMapping("/notify")
+    public ModelAndView notify(@ModelAttribute DummyNotificationClass notif, Model model) {
+        int nState = uns.notify(notif);
+        return new ModelAndView("redirect:table/"+notif.product + "?nState=" + nState);
+    }
 
     @GetMapping("/all")
     public ModelAndView all(Model model) {

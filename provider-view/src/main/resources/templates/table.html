@@ -40,5 +40,12 @@
         </tr>
         </tbody>
     </table>
+    <form action="#" th:action="@{/notify}" th:object="${notif}" method="post">
+        <input type="hidden" id="nproduct" name="product" th:field="*{product}" />
+        <label for="uid">User id: </label>
+        <input id="uid" type="text" th:field="*{uid}" placeholder="000" />
+        <input type="submit" value="Notify User" />
+    </form>
+    <p th:text="${notifState}"></p>
 </body>
 </html>
